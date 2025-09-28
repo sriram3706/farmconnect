@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farm2House - Farmer Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+         :root {
+            --primary-color: #2a9d8f;
+            --secondary-color: #e9c46a;
+            --background-color: #f4f7f6;
+            --text-color: #264653;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+        }
+        
+        .main-header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            font-weight: 400;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .notification-bell {
+            position: relative;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-bell:hover {
+            background: #228a7e;
+            transform: scale(1.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+            display: none;
+        }
+        
+        .notification-badge.active {
+            display: block;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .main-nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 5px;
+        }
+        
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .main-nav a:hover,
+        .main-nav a.active {
+            color: var(--primary-color);
+        }
+        
+        .main-nav a:hover::after,
+        .main-nav a.active::after {
+            width: 100%;
+        }
+        
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: auto;
+        }
+        /* Toast Notifications */
+        
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 2000;
+        }
+        
+        .toast {
+            background: var(--success-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 350px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .toast.warning {
+            background: var(--warning-color);
+            color: #333;
+        }
+        
+        .toast.error {
+            background: var(--danger-color);
+        }
+        
+        .toast-close {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        /* Notification Panel */
+        
+        .notification-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1500;
+            overflow-y: auto;
+        }
+        
+        .notification-panel.open {
+            right: 0;
+        }
+        
+        .notification-header {
+            padding: 2rem;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        
+        .panel-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .notification-list {
+            padding: 1rem;
+        }
+        
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s ease;
+        }
+        
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .notification-item.unread {
+            background: #f0f8ff;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .notification-time {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-content {
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+        
+        .notification-actions {
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .notification-btn {
+            padding: 0.3rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        
+        .notification-btn.accept {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .notification-btn.view {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .dashboard-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+        
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+        
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.7rem 1.3rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #228a7e;
+            transform: translateY(-2px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .stat-card {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-card .icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+        
+        .stat-card .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .stat-card .label {
+            color: #666;
+        }
+        
+        .stat-card.notification {
+            background: linear-gradient(135deg, #fff5f5, #ffe6e6);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .stat-card.notification .icon {
+            color: var(--danger-color);
+            animation: shake 2s infinite;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-content h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .card-content .price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+        
+        .actions .btn {
+            flex: 1;
+            padding: 0.6rem;
+            text-align: center;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .modal-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 14px;
+            width: 450px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            animation: popup 0.5s ease-out;
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .modal-content input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-content input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.2);
+            outline: none;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        /* Recent Orders Section */
+        
+        .recent-orders {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .order-item:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+        
+        .order-item.new {
+            border-left: 4px solid var(--success-color);
+            background: #f0fff4;
+        }
+        
+        .order-info h4 {
+            margin: 0 0 0.5rem;
+            color: var(--text-color);
+        }
+        
+        .order-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .order-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-new {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background: #cce7ff;
+            color: #004085;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes popup {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-2px);
+            }
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(2px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .notification-panel {
+                width: 100%;
+                right: -100%;
+            }
+            .main-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .header-actions {
+                order: -1;
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="main-header">
+        <a href="farmer-dashboard.html" class="logo">Farm2House <span>Farmer</span></a>
+        <div class="header-actions">
+            <button class="notification-bell" onclick="toggleNotificationPanel()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="farmer-dashboard.html" class="active">Home & Products</a></li>
+                    <li><a href="farmerorders.html">Orders</a></li>
+                    <li><a href="farmerprofile.html">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3>Recent Orders</h3>
+            <button class="panel-close" onclick="toggleNotificationPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-list" id="notificationList">
+            <!-- Notifications will be populated here -->
+        </div>
+    </div>
+
+    <main>
+        <section id="home" class="dashboard-section">
+            <div class="section-header">
+                <h2 id="welcome-message">Welcome Back!</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-seedling"></i></div>
+                    <div>
+                        <div id="product-count" class="value">0</div>
+                        <div class="label">Total Products</div>
+                    </div>
+                </div>
+                <div class="stat-card notification" id="pendingOrdersCard" style="display: none;">
+                    <div class="icon"><i class="fas fa-bell"></i></div>
+                    <div>
+                        <div id="pending-orders-count" class="value">0</div>
+                        <div class="label">New Orders!</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-chart-line"></i></div>
+                    <div>
+                        <div id="total-revenue" class="value">₹0</div>
+                        <div class="label">Total Revenue</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <div>
+                        <div id="total-customers" class="value">0</div>
+                        <div class="label">Total Customers</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Orders Section -->
+        <section class="recent-orders" id="recentOrdersSection" style="display: none;">
+            <div class="section-header">
+                <h2>Recent Orders</h2>
+                <button class="btn" onclick="window.location.href='farmerorders.html'">View All Orders</button>
+            </div>
+            <div id="recentOrdersList">
+                <!-- Recent orders will be populated here -->
+            </div>
+        </section>
+
+        <section id="products" class="dashboard-section">
+            <div class="section-header">
+                <h2>My Products</h2>
+                <button class="btn" onclick="openModal()">+ Add New Product</button>
+            </div>
+            <div class="product-grid" id="productGrid">
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h2>Add New Product</h2>
+            <input type="text" id="productName" placeholder="Product Name" required>
+            <input type="number" id="productPrice" placeholder="Price (in ₹)" required>
+            <input type="text" id="imageUrl" placeholder="Image URL" required>
+            <div class="modal-actions">
+                <button class="btn" style="background-color: #777;" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="addProduct()">Add Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdGYfBrC9bqMM-vTnoULlat5C3agpeBoU",
+            authDomain: "farmer-to-customer-a173d.firebaseapp.com",
+            projectId: "farmer-to-customer-a173d",
+            storageBucket: "farmer-to-customer-a173d.appspot.com",
+            messagingSenderId: "828098415631",
+            appId: "1:828098415631:web:9685b4f4956d319637677a",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // --- DOM Elements ---
+        const productGrid = document.getElementById("productGrid");
+        const modal = document.getElementById("productModal");
+        const productCountEl = document.getElementById("product-count");
+        const pendingOrdersCountEl = document.getElementById("pending-orders-count");
+        const pendingOrdersCard = document.getElementById("pendingOrdersCard");
+        const welcomeMessageEl = document.getElementById("welcome-message");
+        const notificationPanel = document.getElementById("notificationPanel");
+        const notificationList = document.getElementById("notificationList");
+        const notificationBadge = document.getElementById("notificationBadge");
+        const toastContainer = document.getElementById("toastContainer");
+        const recentOrdersSection = document.getElementById("recentOrdersSection");
+        const recentOrdersList = document.getElementById("recentOrdersList");
+        const totalRevenueEl = document.getElementById("total-revenue");
+        const totalCustomersEl = document.getElementById("total-customers");
+
+        let currentUser = null;
+        let previousOrderCount = 0;
+        let unreadNotifications = 0;
+
+        // --- Helper Functions ---
+        function openModal() {
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            document.getElementById("productName").value = "";
+            document.getElementById("productPrice").value = "";
+            document.getElementById("imageUrl").value = "";
+        }
+
+        function formatAsIndianRupees(number) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR'
+            }).format(number);
+        }
+
+        function toggleNotificationPanel() {
+            notificationPanel.classList.toggle('open');
+            if (notificationPanel.classList.contains('open')) {
+                unreadNotifications = 0;
+                updateNotificationBadge();
+            }
+        }
+
+        function updateNotificationBadge() {
+            if (unreadNotifications > 0) {
+                notificationBadge.textContent = unreadNotifications;
+                notificationBadge.classList.add('active');
+            } else {
+                notificationBadge.classList.remove('active');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icon = type === 'success' ? 'fa-check-circle' :
+                type === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle';
+
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+
+            if (diffInMinutes < 1) return 'Just now';
+            if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+            if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        // --- Firebase Functions ---
+        function addProduct() {
+            const name = document.getElementById("productName").value.trim();
+            const price = parseFloat(document.getElementById("productPrice").value);
+            const imageUrl = document.getElementById("imageUrl").value.trim();
+
+            if (!name || !price || !imageUrl) {
+                showToast("Please fill in all fields.", "error");
+                return;
+            }
+
+            if (price <= 0) {
+                showToast("Price must be greater than 0.", "error");
+                return;
+            }
+
+            db.collection("products").add({
+                name,
+                price,
+                imageUrl,
+                farmerId: currentUser.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                showToast("Product added successfully!");
+                closeModal();
+            }).catch(error => {
+                console.error("Error adding product: ", error);
+                showToast("Error adding product. Please try again.", "error");
+            });
+        }
+
+        function listenForProducts(user) {
+            db.collection("products").where("farmerId", "==", user.uid)
+                .onSnapshot(snapshot => {
+                    productGrid.innerHTML = "";
+                    productCountEl.textContent = snapshot.size;
+
+                    if (snapshot.empty) {
+                        productGrid.innerHTML = `
+                            <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #666;">
+                                <i class="fas fa-seedling" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-color);"></i>
+                                <p>You haven't added any products yet. Click 'Add New Product' to get started!</p>
+                            </div>
+                        `;
+                    }
+                    snapshot.forEach(doc => {
+                        const p = doc.data();
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.innerHTML = `
+                            <img src="${p.imageUrl || 'https://via.placeholder.com/300'}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                            <div class="card-content">
+                                <h3>${p.name}</h3>
+                                <p class="price">${formatAsIndianRupees(p.price)}</p>
+                                <div class="actions">
+                                    <button class="btn delete-btn" data-id="${doc.id}" data-name="${p.name}">Delete</button>
+                                </div>
+                            </div>`;
+                        productGrid.appendChild(card);
+                    });
+                });
+        }
+
+        function listenForOrders(user) {
+            db.collection("orders")
+                .onSnapshot(snapshot => {
+                    const farmerOrders = [];
+                    let totalRevenue = 0;
+                    const customers = new Set();
+
+                    snapshot.forEach(doc => {
+                        const order = doc.data();
+                        if (order.items && order.items.some(item => item.farmerId === user.uid)) {
+                            const farmerItems = order.items.filter(item => item.farmerId === user.uid);
+                            const farmerOrderTotal = farmerItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+                            farmerOrders.push({
+                                id: doc.id,
+                                ...order,
+                                farmerItems,
+                                farmerTotal: farmerOrderTotal
+                            });
+
+                            if (order.status === 'completed') {
+                                totalRevenue += farmerOrderTotal;
+                            }
+
+                            if (order.customerEmail) {
+                                customers.add(order.customerEmail);
+                            }
+                        }
+                    });
+
+                    // Update stats
+                    const newOrders = farmerOrders.filter(order => order.status === 'new');
+                    const currentOrderCount = newOrders.length;
+
+                    pendingOrdersCountEl.textContent = currentOrderCount;
+                    totalRevenueEl.textContent = formatAsIndianRupees(totalRevenue);
+                    totalCustomersEl.textContent = customers.size;
+
+                    // Show/hide pending orders card
+                    if (currentOrderCount > 0) {
+                        pendingOrdersCard.style.display = 'flex';
+                    } else {
+                        pendingOrdersCard.style.display = 'none';
+                    }
+
+                    // Check for new orders and show notifications
+                    if (currentOrderCount > previousOrderCount && previousOrderCount >= 0) {
+                        const newOrdersCount = currentOrderCount - previousOrderCount;
+                        unreadNotifications += newOrdersCount;
+                        updateNotificationBadge();
+
+                        if (newOrdersCount === 1) {
+                            showToast(`🎉 New order received!`, 'success');
+                        } else {
+                            showToast(`🎉 ${newOrdersCount} new orders received!`, 'success');
+                        }
+                    }
+
+                    previousOrderCount = currentOrderCount;
+
+                    // Update notifications panel
+                    updateNotificationPanel(farmerOrders.slice(0, 10)); // Show latest 10 orders
+
+                    // Update recent orders section
+                    updateRecentOrders(farmerOrders.slice(0, 5)); // Show latest 5 orders
+                });
+        }
+
+        function updateNotificationPanel(orders) {
+            notificationList.innerHTML = '';
+
+            if (orders.length === 0) {
+                notificationList.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #666;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>No orders yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            orders.forEach(order => {
+                        const notificationItem = document.createElement('div');
+                        notificationItem.className = `notification-item ${order.status === 'new' ? 'unread' : ''}`;
+
+                        const customerName = order.customerEmail ? order.customerEmail.split('@')[0] : 'Unknown Customer';
+                        const itemNames = order.farmerItems.map(item => item.name).join(', ');
+
+                        notificationItem.innerHTML = `
+                    <div class="notification-time">${formatDate(order.createdAt)}</div>
+                    <div class="notification-content">
+                        <strong>${customerName}</strong> ordered ${itemNames}
+                        <br>
+                        <strong>Total: ${formatAsIndianRupees(order.farmerTotal)}</strong>
+                    </div>
+                    <div class="notification-actions">
+                        ${order.status === 'new' ? `
+                            <button class="notification-btn accept" onclick="updateOrderStatus('${order.id}', 'processing')">
+                                Accept Order
+                            </button>
+                        ` : ''}
+                        <button class="notification-btn view" onclick="viewOrderDetails('${order.id}')">
+                            View Details
+                        </button>
+                    </div>
+                `;
+                
+                notificationList.appendChild(notificationItem);
+            });
+        }
+
+        function updateRecentOrders(orders) {
+            if (orders.length === 0) {
+                recentOrdersSection.style.display = 'none';
+                return;
+            }
+
+            recentOrdersSection.style.display = 'block';
+            recentOrdersList.innerHTML = '';
+
+            orders.forEach(order => {
+                const orderItem = document.createElement('div');
+                orderItem.className = `order-item ${order.status}`;
+                
+                const customerName = order.customerEmail ? order.customerEmail.split('@')[0] : 'Unknown Customer';
+                const itemCount = order.farmerItems.length;
+                const itemText = itemCount === 1 ? 'item' : 'items';
+                
+                orderItem.innerHTML = `
+                    <div class="order-info">
+                        <h4>Order from ${customerName}</h4>
+                        <p>${itemCount} ${itemText} • ${formatAsIndianRupees(order.farmerTotal)} • ${formatDate(order.createdAt)}</p>
+                    </div>
+                    <div class="order-status status-${order.status}">
+                        ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                    </div>
+                `;
+                
+                orderItem.addEventListener('click', () => viewOrderDetails(order.id));
+                recentOrdersList.appendChild(orderItem);
+            });
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            db.collection("orders").doc(orderId).update({
+                status: newStatus,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                showToast(`Order ${newStatus === 'processing' ? 'accepted' : 'updated'} successfully!`);
+            }).catch(error => {
+                console.error("Error updating order: ", error);
+                showToast("Error updating order status.", "error");
+            });
+        }
+
+        function viewOrderDetails(orderId) {
+            // You can implement this to redirect to order details page
+            // or open a modal with detailed order information
+            window.location.href = `farmerorders.html?orderId=${orderId}`;
+        }
+
+        // --- Event Listeners & Authentication ---
+        productGrid.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                const docId = e.target.dataset.id;
+                const productName = e.target.dataset.name;
+                if (confirm(`Are you sure you want to delete "${productName}"?`)) {
+                    db.collection("products").doc(docId).delete()
+                        .then(() => {
+                            showToast("Product deleted successfully!");
+                        })
+                        .catch(error => {
+                            console.error("Error deleting product: ", error);
+                            showToast("Error deleting product.", "error");
+                        });
+                }
+            }
+        });
+
+        // Close notification panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationPanel.contains(e.target) && 
+                !e.target.closest('.notification-bell') && 
+                notificationPanel.classList.contains('open')) {
+                toggleNotificationPanel();
+            }
+        });
+
+        // Close modal when pressing Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (modal.style.display === 'flex') {
+                    closeModal();
+                }
+                if (notificationPanel.classList.contains('open')) {
+                    toggleNotificationPanel();
+                }
+            }
+        });
+
+        // Form submission with Enter key
+        ['productName', 'productPrice', 'imageUrl'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    addProduct();
+                }
+            });
+        });
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                const displayName = user.displayName || user.email.split('@')[0];
+                welcomeMessageEl.textContent = `Welcome back, ${displayName}!`;
+                
+                // Start listening for products and orders
+                listenForProducts(user);
+                listenForOrders(user);
+                
+                // Initialize previous order count after a brief delay
+                setTimeout(() => {
+                    previousOrderCount = parseInt(pendingOrdersCountEl.textContent) || 0;
+                }, 2000);
+                
+            } else {
+                window.location.href = "loginpage.html";
+            }
+        });
+
+        // Initialize notification sound (optional)
+        function playNotificationSound() {
+            // You can add a notification sound here
+            // const audio = new Audio('notification.mp3');
+            // audio.play().catch(e => console.log('Could not play sound'));
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmConnect - Bridging Farmers & Communities</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+        /* Floating Animation */
+        
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(2deg);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Header Styles */
+        
+        header {
+            background: linear-gradient(135deg, #2c5530, #4a7c59);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: slideInLeft 1s ease-out;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            animation: bounce 2s infinite;
+        }
+        
+        .logo::before {
+            content: "🌾";
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+            animation: rotate 3s linear infinite;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #90ee90;
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        /* Mobile Menu */
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 101;
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(135deg, #2c5530, #4a7c59);
+            transition: right 0.3s ease;
+            z-index: 200;
+            padding: 2rem;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .mobile-menu.active {
+            right: 0;
+        }
+        
+        .mobile-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .mobile-menu-content {
+            padding-top: 4rem;
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+        
+        .mobile-nav-links li {
+            margin-bottom: 1rem;
+        }
+        
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: block;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .mobile-nav-links a:hover {
+            color: #90ee90;
+            padding-left: 1rem;
+        }
+        
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .mobile-auth-buttons .btn {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #90ee90, #32cd32);
+            color: #2c5530;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        /* Hero Section */
+        
+        .hero {
+            background: linear-gradient(135deg, rgba(44, 85, 48, 0.9), rgba(74, 124, 89, 0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387CEEB;stop-opacity:1" /><stop offset="100%" style="stop-color:%2398FB98;stop-opacity:1" /></linearGradient></defs><rect fill="url(%23sky)" width="1200" height="800"/><g fill="%23228B22"><path d="M0,600 Q200,500 400,600 T800,600 T1200,600 L1200,800 L0,800 Z"/></g><g fill="%2332CD32"><circle cx="200" cy="200" r="3"/><circle cx="800" cy="150" r="2"/><circle cx="1000" cy="250" r="4"/></g></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 8rem 2rem;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="40">🌱</text></svg>') repeat;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
+            background: linear-gradient(45deg, #fff, #90ee90);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-content p {
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+        
+        .btn-large {
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 30px;
+        }
+        /* Floating Elements */
+        
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .floating-item {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .floating-item:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-item:nth-child(2) {
+            top: 60%;
+            left: 80%;
+            animation-delay: 1s;
+        }
+        
+        .floating-item:nth-child(3) {
+            top: 40%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+        
+        .floating-item:nth-child(4) {
+            top: 80%;
+            left: 70%;
+            animation-delay: 3s;
+        }
+        /* Features Section */
+        
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%23e8f5e8" opacity="0.5"/></svg>') repeat;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 4rem;
+            color: #2c5530;
+            animation: fadeInUp 1s ease-out;
+            position: relative;
+        }
+        
+        .features h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #90ee90, #32cd32);
+            border-radius: 2px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(144, 238, 144, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.3s;
+            opacity: 0;
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+            animation: rotate 2s linear infinite;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #2c5530;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .feature-card p {
+            position: relative;
+            z-index: 2;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        /* Mission Section */
+        
+        .mission {
+            background: linear-gradient(135deg, #e8f5e8, #d4f1d4);
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mission::before {
+            content: '🌾🌱🍃';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 3rem;
+            opacity: 0.1;
+            animation: slideInRight 20s linear infinite;
+        }
+        
+        .mission-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .mission h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #2c5530;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .mission p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            color: #4a7c59;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        .mission-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1s ease-out;
+            transition: transform 0.3s;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #4a7c59;
+            animation: pulse 2s infinite;
+        }
+        
+        .stat-item p {
+            color: #666;
+            font-size: 1rem;
+            margin: 0;
+        }
+        /* Image Gallery */
+        
+        .gallery {
+            padding: 6rem 2rem;
+            background: white;
+        }
+        
+        .gallery h2 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 4rem;
+            color: #2c5530;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .gallery-item {
+            height: 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(76, 175, 80, 0.8), rgba(139, 195, 74, 0.8));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .gallery-item:nth-child(1)::before {
+            content: '🌾';
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+        }
+        
+        .gallery-item:nth-child(2)::before {
+            content: '🍎';
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+        }
+        
+        .gallery-item:nth-child(3)::before {
+            content: '🥕';
+            background: linear-gradient(45deg, #FF9500, #FFB84D);
+        }
+        
+        .gallery-item:nth-child(4)::before {
+            content: '🌽';
+            background: linear-gradient(45deg, #FFEB3B, #FFF176);
+        }
+        
+        .gallery-item:nth-child(5)::before {
+            content: '🥛';
+            background: linear-gradient(45deg, #81C784, #A5D6A7);
+        }
+        
+        .gallery-item:nth-child(6)::before {
+            content: '🍯';
+            background: linear-gradient(45deg, #FFB74D, #FFCC02);
+        }
+        
+        .gallery-item:hover::before {
+            opacity: 0.9;
+            transform: scale(1.1);
+        }
+        /* CTA Section */
+        
+        .cta-section {
+            background: linear-gradient(135deg, #2c5530, #4a7c59);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(144, 238, 144, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta-content h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .cta-content p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        .cta-buttons-section {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+        /* Footer */
+        
+        footer {
+            background: #1a3a1e;
+            color: white;
+            padding: 4rem 2rem 2rem;
+            position: relative;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            color: #90ee90;
+            font-size: 1.3rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.7rem;
+        }
+        
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: #90ee90;
+            padding-left: 5px;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        /* Responsive Design */
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .auth-buttons {
+                display: none;
+            }
+            .mobile-menu-toggle {
+                display: block;
+            }
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+            .cta-buttons,
+            .cta-buttons-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            .features-grid,
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            .mission-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .feature-card {
+                padding: 2rem;
+            }
+            .feature-icon {
+                font-size: 3rem;
+            }
+            .feature-card h3 {
+                font-size: 1.5rem;
+            }
+            .features h2,
+            .mission h2,
+            .gallery h2 {
+                font-size: 2.2rem;
+            }
+            .cta-content h2 {
+                font-size: 2.5rem;
+            }
+            .btn-large {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+            }
+            .hero {
+                padding: 6rem 1rem;
+            }
+            .features,
+            .mission,
+            .gallery {
+                padding: 4rem 1rem;
+            }
+            .cta-section {
+                padding: 4rem 1rem;
+            }
+            footer {
+                padding: 3rem 1rem 1rem;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .floating-item {
+                font-size: 1.5rem;
+            }
+            .stat-item {
+                padding: 1.5rem;
+            }
+            .stat-item h3 {
+                font-size: 2rem;
+            }
+            .gallery-item {
+                height: 250px;
+            }
+            .gallery-item::before {
+                font-size: 4rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+            .features h2,
+            .mission h2,
+            .gallery h2 {
+                font-size: 2rem;
+            }
+            .cta-content h2 {
+                font-size: 2.2rem;
+            }
+            .mission-stats {
+                grid-template-columns: 1fr;
+            }
+            .mobile-menu {
+                width: 100%;
+                right: -100%;
+            }
+            .mobile-menu.active {
+                right: 0;
+            }
+            .hero {
+                padding: 5rem 1rem;
+            }
+            .features,
+            .mission,
+            .gallery {
+                padding: 3rem 1rem;
+            }
+            .cta-section {
+                padding: 3rem 1rem;
+            }
+        }
+        /* Scroll Animation */
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="#" class="logo">FarmConnect</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#mission">Mission</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="loginpage.html" class="btn btn-secondary">Continue</a>
+                <a href="signuppage.html" class="btn btn-primary">Register</a>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                ☰
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" id="mobileMenuClose">✕</button>
+        <div class="mobile-menu-content">
+            <ul class="mobile-nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#mission">Mission</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="mobile-auth-buttons">
+                <a href="E:\Finak Year Project\Main Project\loginpage.html" class="btn btn-secondary">Sign In</a>
+                <a href="E:\Finak Year Project\Main Project\signuppage.html" class="btn btn-primary">Join Us</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="floating-elements">
+            <div class="floating-item">🌾</div>
+            <div class="floating-item">🍎</div>
+            <div class="floating-item">🥕</div>
+            <div class="floating-item">🌱</div>
+        </div>
+        <div class="hero-content">
+            <h1>Welcome to FarmConnect</h1>
+            <p>Bridging the gap between local farmers and communities. Discover fresh, sustainable, and locally-sourced produce while supporting your neighborhood farmers.</p>
+            <div class="cta-buttons">
+                <a href="signuppage.html" class="btn btn-primary btn-large">Get Started</a>
+                <a href="#about" class="btn btn-secondary btn-large">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="about">
+        <h2>Why Choose FarmConnect?</h2>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🌱</div>
+                <h3>Fresh & Sustainable</h3>
+                <p>Connect with local farmers who prioritize sustainable farming practices and deliver the freshest produce to your community.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🤝</div>
+                <h3>Direct Connection</h3>
+                <p>Build meaningful relationships between farmers and consumers, fostering trust and transparency in the food supply chain.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🌍</div>
+                <h3>Community Impact</h3>
+                <p>Support local economies and reduce environmental impact by choosing locally-sourced products and sustainable farming methods.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">💡</div>
+                <h3>Smart Platform</h3>
+                <p>Our intuitive platform makes it easy for farmers to showcase their products and for consumers to discover local produce.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission" id="mission">
+        <div class="mission-content">
+            <h2>Our Mission</h2>
+            <p>To create a sustainable ecosystem where farmers thrive and communities have access to fresh, locally-grown produce. We believe in the power of direct connections and transparent food systems.</p>
+            <div class="mission-stats">
+                <div class="stat-item animate-on-scroll">
+                    <h3>500+</h3>
+                    <p>Registered Farmers</p>
+                </div>
+                <div class="stat-item animate-on-scroll">
+                    <h3>15,000+</h3>
+                    <p>Community Members</p>
+                </div>
+                <div class="stat-item animate-on-scroll">
+                    <h3>100+</h3>
+                    <p>Local Communities</p>
+                </div>
+                <div class="stat-item animate-on-scroll">
+                    <h3>100%</h3>
+                    <p>Sustainable Focus</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Connect?</h2>
+            <p>Join thousands of farmers and community members who are already part of the FarmConnect ecosystem. Together, we're building a more sustainable future.</p>
+            <div class="cta-buttons-section">
+                <a href="E:\Finak Year Project\Main Project\signuppage.html" class="btn btn-primary btn-large">Join as Farmer</a>
+                <a href="E:\Finak Year Project\Main Project\signuppage.html" class="btn btn-secondary btn-large">Join as Consumer</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>FarmConnect</h3>
+                <p>Connecting farmers and communities for a sustainable future. Fresh, local, and transparent.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Platform</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#mission">Mission</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>
+                    <a href="signup page.html" class="btn btn-primary">Get Started</a>
+                </h3>
+                <ul>
+                    <li><a href="E:\Finak Year Project\Main Project\signuppage.html">Join as Farmer</a></li>
+                    <li><a href="E:\Finak Year Project\Main Project\signuppage.html">Join as Consumer</a></li>
+                    <li><a href="E:\Finak Year Project\Main Project\loginpage.html">Sign In</a></li>
+                    <li><a href="#">Community Guidelines</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FarmConnect. All rights reserved. Building sustainable communities, one connection at a time. 🌱</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+
+        function openMobileMenu() {
+            mobileMenu.classList.add('active');
+            mobileMenuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+            mobileMenuOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        mobileMenuToggle.addEventListener('click', openMobileMenu);
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+        // Close mobile menu when clicking on navigation links
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Close mobile menu on window resize if it's open
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+
+        // Scroll animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const animateElements = document.querySelectorAll('.animate-on-scroll');
+            animateElements.forEach(el => observer.observe(el));
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

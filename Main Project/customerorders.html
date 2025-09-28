@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Farm2House</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+         :root {
+            --primary-color: #2a9d8f;
+            --secondary-color: #e9c46a;
+            --background-color: #f4f7f6;
+            --text-color: #264653;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+        
+        .continue-shopping {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        /* Order Card Styling */
+        
+        .order-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .order-card.highlight {
+            box-shadow: 0 4px 20px rgba(233, 196, 106, 0.5);
+            border: 1px solid var(--secondary-color);
+        }
+        
+        .order-header {
+            padding: 1rem 1.5rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .order-header p {
+            margin: 0;
+        }
+        
+        .order-header .order-id {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .order-header .order-total {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .order-body {
+            padding: 1.5rem;
+        }
+        /* Items in Order */
+        
+        .order-items-list {
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .order-item:not(:last-child) {
+            margin-bottom: 1rem;
+        }
+        
+        .order-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .order-item .item-info {
+            flex-grow: 1;
+        }
+        
+        .order-item .item-info p {
+            margin: 0;
+        }
+        
+        .order-item .item-name {
+            font-weight: 600;
+        }
+        
+        .order-item .item-qty {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        /* Tracking Timeline */
+        
+        .tracking-timeline {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .tracking-step {
+            text-align: center;
+            position: relative;
+            width: 25%;
+        }
+        
+        .tracking-step .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc;
+            color: white;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            border: 3px solid #ccc;
+            transition: all 0.4s ease;
+        }
+        
+        .tracking-step .label {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .tracking-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            height: 4px;
+            width: 100%;
+            background-color: #ccc;
+            z-index: -1;
+            transition: background-color 0.4s ease;
+        }
+        /* Active/Completed Step Styling */
+        
+        .tracking-step.completed .icon {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .tracking-step.completed .label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .tracking-step.completed::after {
+            background-color: var(--primary-color);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="customerdasboard.html" class="continue-shopping">← Back to Shopping</a>
+        <h1>My Orders</h1>
+        <div id="orders-container">
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdGYfBrC9bqMM-vTnoULlat5C3agpeBoU",
+            authDomain: "farmer-to-customer-a173d.firebaseapp.com",
+            projectId: "farmer-to-customer-a173d",
+            storageBucket: "farmer-to-customer-a173d.appspot.com",
+            messagingSenderId: "828098415631",
+            appId: "1:828098415631:web:9685b4f4956d319637677a",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Helper function for formatting prices
+        function formatAsIndianRupees(number) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR'
+            }).format(number);
+        }
+
+        // Creates the visual tracking bar
+        function createTrackingTimeline(status) {
+            const statuses = ['Placed', 'Processing', 'Shipped', 'Delivered'];
+            const icons = ['fa-box', 'fa-cogs', 'fa-truck', 'fa-check-circle'];
+            let currentIndex = statuses.indexOf(status);
+
+            let timelineHtml = '<ul class="tracking-timeline">';
+            for (let i = 0; i < statuses.length; i++) {
+                const isCompleted = i <= currentIndex ? 'completed' : '';
+                timelineHtml += `
+                    <li class="tracking-step ${isCompleted}">
+                        <div class="icon"><i class="fas ${icons[i]}"></i></div>
+                        <div class="label">${statuses[i]}</div>
+                    </li>
+                `;
+            }
+            timelineHtml += '</ul>';
+            return timelineHtml;
+        }
+
+        // ** NEW ** Creates the list of products in the order
+        function createItemsList(items) {
+            let itemsHtml = '<div class="order-items-list">';
+            items.forEach(item => {
+                itemsHtml += `
+                    <div class="order-item">
+                        <img src="${item.img || 'https://via.placeholder.com/80'}" alt="${item.name}">
+                        <div class="item-info">
+                            <p class="item-name">${item.name}</p>
+                            <p class="item-qty">Quantity: ${item.quantity}</p>
+                        </div>
+                        <p class="item-price">${formatAsIndianRupees(item.price * item.quantity)}</p>
+                    </div>
+                `;
+            });
+            itemsHtml += '</div>';
+            return itemsHtml;
+        }
+
+        function loadOrders(user) {
+            const ordersContainer = document.getElementById('orders-container');
+            db.collection("orders")
+                .where("customerId", "==", user.uid)
+                .orderBy("createdAt", "desc")
+                .onSnapshot(snapshot => {
+                    ordersContainer.innerHTML = '';
+                    if (snapshot.empty) {
+                        ordersContainer.innerHTML = '<p>You have not placed any orders yet.</p>';
+                        return;
+                    }
+                    snapshot.forEach(doc => {
+                        const order = doc.data();
+                        const orderId = doc.id;
+                        const orderCard = document.createElement('div');
+                        orderCard.className = 'order-card';
+                        orderCard.id = orderId;
+
+                        const orderDate = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
+
+                        orderCard.innerHTML = `
+                            <div class="order-header">
+                                <p class="order-id">ORDER #${orderId.substring(0, 8).toUpperCase()}<br><small>${orderDate}</small></p>
+                                <p class="order-total">${formatAsIndianRupees(order.totalPrice)}</p>
+                            </div>
+                            <div class="order-body">
+                                <h4>Items</h4>
+                                ${createItemsList(order.items)}
+                                <h4 style="margin-top: 2rem;">Status</h4>
+                                ${createTrackingTimeline(order.status)}
+                            </div>
+                        `;
+                        ordersContainer.appendChild(orderCard);
+                    });
+
+                    const newOrderId = sessionStorage.getItem('newOrderId');
+                    if (newOrderId) {
+                        const newOrderCard = document.getElementById(newOrderId);
+                        if (newOrderCard) {
+                            newOrderCard.classList.add('highlight');
+                            newOrderCard.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                        sessionStorage.removeItem('newOrderId');
+                    }
+                }, error => {
+                    console.error("Firebase Query Error: ", error);
+                    // This is where the index error will appear
+                    ordersContainer.innerHTML = `<p style="color: red;">Error loading orders. You may need to create a database index in Firebase. See browser console (F12) for details.</p>`;
+                });
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadOrders(user);
+            } else {
+                window.location.href = "loginpage.html";
+            }
+        });
+    </script>
+</body>
+
+</html>

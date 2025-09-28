@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farmer Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Raleway', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #c6f7e2, #7cd992);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: "🌾";
+            font-size: 180px;
+            opacity: 0.05;
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(20px);
+            }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            width: 360px;
+            animation: slideUp 0.6s ease-out;
+            box-shadow: 0 8px 20px rgba(0, 100, 0, 0.2);
+            text-align: center;
+            border: 2px solid #d9f7cb;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .login-container h2 {
+            color: #2d6a4f;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .login-container input,
+        .login-container select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            background: #f1fff3;
+            font-size: 15px;
+        }
+        
+        .login-container button {
+            background-color: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        
+        .login-container button:hover {
+            background-color: #1b4332;
+        }
+        
+        .extra-fields {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        #userUID {
+            margin-top: 15px;
+            word-break: break-word;
+            color: #1b4332;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>🌱 Farm Connect</h2>
+        <form id="signupForm">
+            <input type="text" id="name" placeholder="👨‍🌾 Full Name" required />
+            <input type="email" id="email" placeholder="📧 Email Address" required />
+            <input type="password" id="password" placeholder="🔒 Password" required />
+            <input type="text" id="address" placeholder="🏡 Address" required />
+            <select id="category" required>
+        <option value="" disabled selected>🌾 Select Role</option>
+        <option value="farmer">👨‍🌾 Farmer</option>
+        <option value="customer">🛒 Customer</option>
+    </select>
+
+            <div class="extra-fields" id="genderField">
+                <select id="gender">
+            <option value="" disabled selected>⚧ Select Gender</option>
+            <option value="male">♂ Male</option>
+            <option value="female">♀ Female</option>
+            <option value="other">⚧ Other</option>
+        </select>
+            </div>
+
+            <div class="extra-fields" id="farmerFields">
+                <input type="text" id="mobile" placeholder="📞 Mobile Number" />
+                <input type="text" id="aadhar" placeholder="🆔 Aadhar Number" />
+            </div>
+
+            <!-- ✅ One common signup button for both farmer & customer -->
+            <button type="submit">🌻 Sign Up</button>
+        </form>
+
+
+        <div id="userUID"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAdGYfBrC9bqMM-vTnoULlat5C3agpeBoU",
+            authDomain: "farmer-to-customer-a173d.firebaseapp.com",
+            projectId: "farmer-to-customer-a173d",
+            storageBucket: "farmer-to-customer-a173d.appspot.com",
+            messagingSenderId: "828098415631",
+            appId: "1:828098415631:web:9685b4f4956d319637677a",
+            databaseURL: "https://farmer-to-customer-a173d-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        const categorySelect = document.getElementById("category");
+        const farmerFields = document.getElementById("farmerFields");
+        const genderField = document.getElementById("genderField");
+
+        categorySelect.addEventListener("change", function() {
+            const selected = this.value;
+            genderField.style.display = "block";
+
+            if (selected === "farmer") {
+                farmerFields.style.display = "block";
+            } else {
+                farmerFields.style.display = "none";
+            }
+        });
+
+
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const category = document.getElementById('category').value;
+            const gender = document.getElementById('gender').value;
+
+            const mobile = document.getElementById('mobile').value;
+            const aadhar = document.getElementById('aadhar').value;
+            const address = document.getElementById('address').value;
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    let userData = {
+                        uid: user.uid,
+                        name,
+                        email,
+                        address,
+                        category,
+                        gender
+                    };
+
+                    if (category === "farmer") {
+                        userData.mobile = mobile;
+                        userData.aadhar = aadhar;
+                    }
+
+                    firebase.database().ref(category + 's/' + user.uid).set(userData)
+                        .then(() => {
+                            // ✅ Redirect based on category
+                            if (category === "farmer") {
+                                window.location.href = "farmerdasboard.html";
+                            } else if (category === "customer") {
+                                window.location.href = "customerdasboard.html";
+                            }
+                        });
+
+                })
+                .catch((error) => {
+                    alert("⚠ Error: " + error.message);
+                });
+        });
+    </script>
+</body>
+
+</html>

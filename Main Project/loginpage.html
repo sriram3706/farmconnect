@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Raleway', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #c6f7e2, #7cd992);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: "🌾";
+            font-size: 180px;
+            opacity: 0.05;
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(20px);
+            }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            width: 360px;
+            animation: slideUp 0.6s ease-out;
+            box-shadow: 0 8px 20px rgba(0, 100, 0, 0.2);
+            text-align: center;
+            border: 2px solid #d9f7cb;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .login-container h2 {
+            color: #2d6a4f;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            background: #f1fff3;
+            font-size: 15px;
+        }
+        
+        .login-container button {
+            background-color: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        
+        .login-container button:hover {
+            background-color: #1b4332;
+        }
+        
+        #statusMessage {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #1b4332;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>🌾 Welcome Back</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="📧 Email Address" required />
+            <input type="password" id="password" placeholder="🔒 Password" required />
+            <button type="submit">🌻 Login</button>
+        </form>
+        <div id="statusMessage"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // Firebase Config
+        var firebaseConfig = {
+            apiKey: "AIzaSyAdGYfBrC9bqMM-vTnoULlat5C3agpeBoU",
+            authDomain: "farmer-to-customer-a173d.firebaseapp.com",
+            projectId: "farmer-to-customer-a173d",
+            storageBucket: "farmer-to-customer-a173d.appspot.com",
+            messagingSenderId: "828098415631",
+            appId: "1:828098415631:web:9685b4f4956d319637677a",
+            databaseURL: "https://farmer-to-customer-a173d-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        document.getElementById("loginForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const status = document.getElementById("statusMessage");
+            status.innerText = "🔄 Checking credentials...";
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const uid = userCredential.user.uid;
+
+                    // Check if user is a farmer
+                    firebase.database().ref("farmers/" + uid).once("value").then((snapshot) => {
+                        if (snapshot.exists()) {
+                            status.innerText = "🌿 Redirecting to Farmer...";
+                            setTimeout(() => window.location.href = "farmerdasboard.html", 1000);
+                        } else {
+                            // Else, check if customer
+                            firebase.database().ref("customers/" + uid).once("value").then((snap) => {
+                                if (snap.exists()) {
+                                    status.innerText = "🛒 Redirecting to Customer...";
+                                    setTimeout(() => window.location.href = "customerdasboard.html", 1000);
+                                } else {
+                                    status.innerText = "❌ Category not found. Contact support.";
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch((error) => {
+                    status.innerText = "❌ " + error.message;
+                });
+        });
+    </script>
+</body>
+
+</html>
